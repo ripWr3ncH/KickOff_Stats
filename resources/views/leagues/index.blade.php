@@ -35,10 +35,17 @@
                     </div>
                 </div>
                 
-                <a href="{{ route('leagues.show', $league->slug) }}" 
-                   class="block w-full bg-primary hover:bg-green-600 text-white text-center py-3 rounded-lg font-medium transition-colors duration-300">
-                    View League
-                </a>
+                <div class="flex space-x-2">
+                    <a href="{{ route('leagues.show', $league->slug) }}" 
+                       class="flex-1 bg-primary hover:bg-green-600 text-white text-center py-3 rounded-lg font-medium transition-colors duration-300">
+                        View League
+                    </a>
+                    <a href="{{ route('leagues.standings', $league->slug) }}" 
+                       class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-3 rounded-lg transition-colors duration-300" 
+                       title="View Standings">
+                        <i class="fas fa-list-ol"></i>
+                    </a>
+                </div>
             </div>
         </div>
         @endforeach
