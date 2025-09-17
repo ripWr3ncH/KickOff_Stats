@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="defaultGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <circle cx="100" cy="100" r="95" fill="url(#defaultGradient)" stroke="#059669" stroke-width="5"/>
+  <path d="M 70 120 L 100 80 L 130 120 L 115 130 L 100 100 L 85 130 Z" fill="white"/>
+  <circle cx="100" cy="100" r="25" fill="none" stroke="white" stroke-width="3"/>
+  <text x="100" y="160" font-family="Arial, sans-serif" font-size="16" font-weight="bold" fill="white" text-anchor="middle">LEAGUE</text>
+</svg>
