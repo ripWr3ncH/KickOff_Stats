@@ -14,6 +14,7 @@ Route::get('/api-status', [HomeController::class, 'apiStatus'])->name('api.statu
 // League routes
 Route::get('/leagues', [LeagueController::class, 'index'])->name('leagues.index');
 Route::get('/leagues/{slug}', [LeagueController::class, 'show'])->name('leagues.show');
+Route::get('/leagues/{slug}/standings', [LeagueController::class, 'standings'])->name('leagues.standings');
 
 // Match routes
 Route::get('/matches', [MatchController::class, 'index'])->name('matches.index');
