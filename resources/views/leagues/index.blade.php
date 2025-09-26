@@ -11,10 +11,26 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         @foreach($leagues as $league)
+        @php
+            $gradientClass = match($league->slug) {
+                'premier-league' => 'from-purple-600 to-blue-600',
+                'la-liga' => 'from-orange-500 to-red-600', 
+                'serie-a' => 'from-blue-600 to-green-600',
+                default => 'from-primary to-green-600'
+            };
+        @endphp
         <div class="bg-card rounded-lg overflow-hidden hover:shadow-2xl transition-all duration-300 group">
-            <div class="h-48 bg-gradient-to-br from-primary to-green-600 p-6 flex items-center justify-center">
+            <div class="h-48 bg-gradient-to-br {{ $gradientClass }} p-6 flex items-center justify-center">
                 <div class="text-center">
-                    <i class="fas fa-trophy text-white text-6xl mb-4 group-hover:scale-110 transition-transform duration-300"></i>
+                    @if($league->logo_url)
+                        <div class="w-20 h-20 mx-auto mb-4 bg-white rounded-full p-3 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                            <img src="{{ $league->logo_url }}" 
+                                 alt="{{ $league->name }} Logo" 
+                                 class="w-full h-full object-contain league-logo">
+                        </div>
+                    @else
+                        <i class="fas fa-trophy text-white text-6xl mb-4 group-hover:scale-110 transition-transform duration-300"></i>
+                    @endif
                     <h3 class="text-white text-xl font-bold">{{ $league->name }}</h3>
                 </div>
             </div>

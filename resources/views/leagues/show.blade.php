@@ -7,9 +7,17 @@
     <!-- League Header -->
     <div class="bg-card rounded-lg p-6 mb-8">
         <div class="flex items-center space-x-4">
-            <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
-                <i class="fas fa-trophy text-white text-2xl"></i>
-            </div>
+            @if($league->logo_url)
+                <div class="w-16 h-16 bg-white rounded-full p-2 shadow-lg">
+                    <img src="{{ $league->logo_url }}" 
+                         alt="{{ $league->name }} Logo" 
+                         class="w-full h-full object-contain league-logo">
+                </div>
+            @else
+                <div class="w-16 h-16 bg-primary rounded-full flex items-center justify-center">
+                    <i class="fas fa-trophy text-white text-2xl"></i>
+                </div>
+            @endif
             <div>
                 <h1 class="text-3xl font-bold text-light">{{ $league->name }}</h1>
                 <p class="text-muted">{{ $league->country }} • {{ $league->season }}</p>
