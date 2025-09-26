@@ -63,23 +63,31 @@ class LiveScoreController extends Controller
                 continue;
             }
 
-            // Find match in our database
+            // More flexible team name matching
+            $homeTeamName = $matchData['homeTeam']['name'];
+            $awayTeamName = $matchData['awayTeam']['name'];
+
+            // Find match in our database with flexible name matching
             $match = FootballMatch::whereHas('league', function($q) use ($leagueMapping, $competitionId) {
                 $q->where('slug', $leagueMapping[$competitionId]);
             })
-            ->whereHas('homeTeam', function($q) use ($matchData) {
-                $q->where('name', $matchData['homeTeam']['name']);
+            ->whereHas('homeTeam', function($q) use ($homeTeamName) {
+                $q->where('name', $homeTeamName)
+                  ->orWhere('name', 'like', '%' . str_replace(' FC', '', $homeTeamName) . '%')
+                  ->orWhere('name', 'like', '%' . str_replace('FC ', '', $homeTeamName) . '%');
             })
-            ->whereHas('awayTeam', function($q) use ($matchData) {
-                $q->where('name', $matchData['awayTeam']['name']);
+            ->whereHas('awayTeam', function($q) use ($awayTeamName) {
+                $q->where('name', $awayTeamName)
+                  ->orWhere('name', 'like', '%' . str_replace(' FC', '', $awayTeamName) . '%')
+                  ->orWhere('name', 'like', '%' . str_replace('FC ', '', $awayTeamName) . '%');
             })
             ->first();
 
             if ($match) {
                 $match->update([
-                    'home_score' => $matchData['score']['fullTime']['home'],
-                    'away_score' => $matchData['score']['fullTime']['away'],
-                    'minute' => $matchData['minute'],
+                    'home_score' => $matchData['score']['fullTime']['home'] ?? 0,
+                    'away_score' => $matchData['score']['fullTime']['away'] ?? 0,
+                    'minute' => $matchData['minute'] ?? null,
                     'status' => $this->mapStatus($matchData['status'])
                 ]);
 
