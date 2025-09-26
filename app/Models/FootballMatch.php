@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class FootballMatch extends Model
 {
     protected $fillable = [
+        'api_match_id',
         'league_id',
         'home_team_id',
         'away_team_id',
