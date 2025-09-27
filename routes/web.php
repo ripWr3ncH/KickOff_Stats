@@ -18,8 +18,8 @@ Route::get('/leagues/{slug}/standings', [LeagueController::class, 'standings'])-
 
 // Match routes
 Route::get('/matches', [MatchController::class, 'index'])->name('matches.index');
-Route::get('/matches/{id}', [MatchController::class, 'show'])->name('matches.show');
 Route::get('/matches/live', [MatchController::class, 'live'])->name('matches.live');
+Route::get('/matches/{id}', [MatchController::class, 'show'])->name('matches.show');
 
 // Team routes
 Route::get('/teams', [TeamController::class, 'index'])->name('teams.index');
