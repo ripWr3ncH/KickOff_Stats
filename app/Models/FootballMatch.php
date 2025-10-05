@@ -30,6 +30,40 @@ class FootballMatch extends Model
         'events' => 'array'
     ];
 
+    /**
+     * Get match date in Bangladesh timezone
+     */
+    public function getLocalMatchDateAttribute()
+    {
+        return $this->match_date->setTimezone('Asia/Dhaka');
+    }
+
+    /**
+     * Direct method to get local match date (non-attribute version)
+     */
+    public function getLocalMatchDate()
+    {
+        return $this->match_date->setTimezone('Asia/Dhaka');
+    }
+
+    /**
+     * Check if match is today in Bangladesh timezone
+     */
+    public function isTodayLocal()
+    {
+        $bangladeshNow = now('Asia/Dhaka');
+        return $this->getLocalMatchDateAttribute()->isSameDay($bangladeshNow);
+    }
+
+    /**
+     * Check if match is tomorrow in Bangladesh timezone
+     */
+    public function isTomorrowLocal()
+    {
+        $bangladeshTomorrow = now('Asia/Dhaka')->addDay();
+        return $this->getLocalMatchDateAttribute()->isSameDay($bangladeshTomorrow);
+    }
+
     public function league(): BelongsTo
     {
         return $this->belongsTo(League::class);
