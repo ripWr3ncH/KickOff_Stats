@@ -14,11 +14,13 @@ class HomeController extends Controller
     {
         $leagues = League::where('is_active', true)->get();
         
-        // Get today's matches
+        // Get today's matches (Bangladesh timezone)
         $todayMatches = FootballMatch::with(['homeTeam', 'awayTeam', 'league'])
-            ->whereDate('match_date', today())
-            ->orderBy('match_date')
-            ->get();
+            ->get()
+            ->filter(function($match) {
+                return $match->isTodayLocal();
+            })
+            ->sortBy('match_date');
         
         // Get live matches
         $liveMatches = FootballMatch::with(['homeTeam', 'awayTeam', 'league'])
@@ -52,7 +54,9 @@ class HomeController extends Controller
     public function apiStatus()
     {
         $leagues = League::with('teams')->where('is_active', true)->get();
-        $todayMatches = FootballMatch::whereDate('match_date', today())->count();
+        $todayMatches = FootballMatch::get()->filter(function($match) {
+            return $match->isTodayLocal();
+        })->count();
         $liveMatches = FootballMatch::where('status', 'live')->count();
         
         return view('api-status', compact('leagues', 'todayMatches', 'liveMatches'));
