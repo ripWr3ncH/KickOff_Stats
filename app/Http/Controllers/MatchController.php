@@ -179,8 +179,8 @@ class MatchController extends Controller
                 'q' => "site:bbc.com/sport {$baseQuery} report"
             ]),
             
-            'highlightsSearchUrl' => 'https://www.google.com/search?' . http_build_query([
-                'q' => "{$homeTeam} vs {$awayTeam} highlights video {$date}"
+            'highlightsSearchUrl' => 'https://www.youtube.com/results?' . http_build_query([
+                'search_query' => "{$homeTeam} vs {$awayTeam} highlights {$date}"
             ]),
             
             'playerRatingsUrl' => 'https://www.google.com/search?' . http_build_query([

@@ -555,9 +555,9 @@
                     
                     <a href="{{ $highlightsSearchUrl }}" 
                        target="_blank"
-                       class="inline-flex items-center px-3 py-2 bg-purple-600/20 text-purple-300 hover:bg-purple-600/30 font-medium rounded-lg transition-colors duration-200 text-sm">
-                        <i class="fas fa-video mr-1"></i>
-                        Highlights
+                       class="inline-flex items-center px-3 py-2 bg-red-600/20 text-red-300 hover:bg-red-600/30 font-medium rounded-lg transition-colors duration-200 text-sm">
+                        <i class="fab fa-youtube mr-1"></i>
+                        YouTube Highlights
                         <i class="fas fa-external-link-alt ml-1 text-xs"></i>
                     </a>
                     
@@ -682,11 +682,11 @@
                     
                     <a href="{{ $highlightsSearchUrl }}" 
                        target="_blank"
-                       class="flex items-center p-3 bg-purple-600/20 rounded-lg hover:bg-purple-600/30 transition-colors">
-                        <i class="fas fa-video text-purple-400 mr-3"></i>
+                       class="flex items-center p-3 bg-red-600/20 rounded-lg hover:bg-red-600/30 transition-colors">
+                        <i class="fab fa-youtube text-red-400 mr-3"></i>
                         <div>
-                            <div class="font-medium text-light">Video Highlights</div>
-                            <div class="text-sm text-muted">Match highlights and key moments</div>
+                            <div class="font-medium text-light">YouTube Highlights</div>
+                            <div class="text-sm text-muted">Search for match highlights on YouTube</div>
                         </div>
                         <i class="fas fa-external-link-alt ml-auto text-muted"></i>
                     </a>
