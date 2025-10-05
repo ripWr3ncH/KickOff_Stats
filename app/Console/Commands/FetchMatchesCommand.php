@@ -107,12 +107,15 @@ class FetchMatchesCommand extends Command
             
             // Create new match
             FootballMatch::create([
+                'api_match_id' => $matchData['id'], // Store API match ID for future updates
                 'league_id' => $league->id,
                 'home_team_id' => $homeTeam->id,
                 'away_team_id' => $awayTeam->id,
-                'match_date' => Carbon::parse($matchData['utcDate']),
+                'match_date' => Carbon::parse($matchData['utcDate'])->utc(),
                 'home_score' => $matchData['score']['fullTime']['home'],
                 'away_score' => $matchData['score']['fullTime']['away'],
+                'halftime_home_score' => $matchData['score']['halfTime']['home'] ?? null,
+                'halftime_away_score' => $matchData['score']['halfTime']['away'] ?? null,
                 'status' => $this->mapStatus($matchData['status']),
                 'minute' => $matchData['minute'] ?? null,
                 'venue' => $matchData['venue'] ?? null,
