@@ -25,8 +25,38 @@ class MatchController extends Controller
         if ($request->has('date')) {
             $query->whereDate('match_date', $request->date);
         } else {
-            // Default to today's matches
-            $query->whereDate('match_date', today());
+            // First try today's matches (using Bangladesh timezone)
+            $todayMatchesCollection = FootballMatch::get()->filter(function($match) {
+                return $match->isTodayLocal();
+            });
+            
+            if ($todayMatchesCollection->count() > 0) {
+                // Get the IDs of today's matches and filter by them
+                $todayMatchIds = $todayMatchesCollection->pluck('id');
+                $query->whereIn('id', $todayMatchIds);
+            } else {
+                // If no matches today, show next upcoming matches
+                $nextMatch = FootballMatch::get()
+                    ->filter(function($match) {
+                        return $match->getLocalMatchDate() > now('Asia/Dhaka');
+                    })
+                    ->sortBy('match_date')
+                    ->first();
+                
+                if ($nextMatch) {
+                    $nextMatchLocalDate = $nextMatch->getLocalMatchDate()->toDateString();
+                    // Get all matches on the same local date as the next match
+                    $nextDayMatches = FootballMatch::get()
+                        ->filter(function($match) use ($nextMatchLocalDate) {
+                            return $match->getLocalMatchDate()->toDateString() === $nextMatchLocalDate;
+                        });
+                    $nextDayMatchIds = $nextDayMatches->pluck('id');
+                    $query->whereIn('id', $nextDayMatchIds);
+                } else {
+                    // Fallback - show empty results
+                    $query->whereIn('id', [0]); // This will return no results
+                }
+            }
         }
         
         // Remove potential duplicates by grouping by unique match identifiers
