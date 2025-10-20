@@ -44,4 +44,8 @@ return [
         'host' => env('API_FOOTBALL_HOST', 'api-football-v1.p.rapidapi.com'),
     ],
 
+    'news_api' => [
+        'api_key' => env('NEWS_API_KEY'),
+    ],
+
 ];
