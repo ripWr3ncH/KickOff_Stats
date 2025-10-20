@@ -27,12 +27,13 @@
                 
                 <!-- Date Filter -->
                 @php
-                    $minDate = $earliestMatch ? $earliestMatch->match_date->format('Y-m-d') : today()->subMonth()->format('Y-m-d');
-                    $maxDate = $latestMatch ? $latestMatch->match_date->format('Y-m-d') : today()->addMonth()->format('Y-m-d');
+                    $bangladeshToday = now('Asia/Dhaka');
+                    $minDate = $earliestMatch ? $earliestMatch->getLocalMatchDate()->format('Y-m-d') : $bangladeshToday->copy()->subMonth()->format('Y-m-d');
+                    $maxDate = $latestMatch ? $latestMatch->getLocalMatchDate()->format('Y-m-d') : $bangladeshToday->copy()->addMonth()->format('Y-m-d');
                 @endphp
                 <input type="date" 
                        name="date" 
-                       value="{{ request('date', today()->format('Y-m-d')) }}"
+                       value="{{ request('date', $bangladeshToday->format('Y-m-d')) }}"
                        min="{{ $minDate }}"
                        max="{{ $maxDate }}"
                        class="bg-card text-light border border-gray-600 rounded-lg px-4 py-2 focus:border-primary focus:outline-none">
@@ -45,8 +46,8 @@
             <!-- Quick Date Ranges -->
             <div class="flex gap-2">
                 @php
-                    $lastWeekDate = today()->subWeek();
-                    $isLastWeekAvailable = $earliestMatch && $lastWeekDate->gte($earliestMatch->match_date->startOfDay());
+                    $lastWeekDate = $bangladeshToday->copy()->subWeek();
+                    $isLastWeekAvailable = $earliestMatch && $lastWeekDate->gte($earliestMatch->getLocalMatchDate()->startOfDay());
                 @endphp
                 
                 @if($isLastWeekAvailable)
@@ -57,32 +58,82 @@
                 @endif
                 
                 @if($earliestMatch)
-                    <a href="{{ route('matches.index', ['date' => $earliestMatch->match_date->format('Y-m-d')]) }}" 
+                    <a href="{{ route('matches.index', ['date' => $earliestMatch->getLocalMatchDate()->format('Y-m-d')]) }}" 
                        class="px-3 py-2 rounded-lg bg-gray-700 text-light hover:bg-gray-600 transition-colors text-sm">
-                        First Available ({{ $earliestMatch->match_date->format('M j') }})
+                        First Available ({{ $earliestMatch->getLocalMatchDate()->format('M j') }})
                     </a>
                 @endif
             </div>
         </div>
     </div>
+    
+    <!-- No Matches Today - Show Upcoming -->
+    @if($matches->count() == 0 && !request('date'))
+        @php
+            $upcomingMatches = \App\Models\FootballMatch::with(['homeTeam', 'awayTeam', 'league'])
+                ->get()
+                ->filter(function($match) {
+                    return $match->getLocalMatchDate() > now('Asia/Dhaka');
+                })
+                ->sortBy('match_date')
+                ->take(6);
+        @endphp
+        
+        @if($upcomingMatches->count() > 0)
+            <div class="bg-card rounded-lg p-6 mb-8">
+                <h3 class="text-xl font-bold text-light mb-4">
+                    <i class="fas fa-calendar-plus text-primary mr-2"></i>
+                    No matches today - Here are the next upcoming matches:
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    @foreach($upcomingMatches as $upcoming)
+                        <a href="{{ route('matches.index', ['date' => $upcoming->getLocalMatchDate()->format('Y-m-d')]) }}" 
+                           class="block p-4 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors">
+                            <div class="text-sm text-primary font-medium mb-2">
+                                {{ $upcoming->getLocalMatchDate()->format('M j, Y - g:i A') }}
+                            </div>
+                            <div class="text-light font-semibold">
+                                {{ $upcoming->homeTeam->name }} <span class="text-muted">vs</span> {{ $upcoming->awayTeam->name }}
+                            </div>
+                            <div class="text-sm text-muted mt-1">
+                                {{ $upcoming->league->name ?? 'Unknown League' }}
+                            </div>
+                        </a>
+                    @endforeach
+                </div>
+                
+                <div class="mt-4 text-center">
+                    @if($upcomingMatches->first())
+                        <a href="{{ route('matches.index', ['date' => $upcomingMatches->first()->getLocalMatchDate()->format('Y-m-d')]) }}" 
+                           class="inline-block bg-primary text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors">
+                            <i class="fas fa-arrow-right mr-2"></i>
+                            View Next Match Day ({{ $upcomingMatches->first()->getLocalMatchDate()->format('M j') }})
+                        </a>
+                    @endif
+                </div>
+            </div>
+        @endif
+    @endif
 
     <!-- Quick Navigation -->
     <div class="flex flex-wrap gap-2 mb-6">
         <!-- Date Navigation -->
         @php
-            $currentDate = request('date') ? \Carbon\Carbon::parse(request('date')) : today();
+            $currentDate = request('date') ? \Carbon\Carbon::parse(request('date')) : $bangladeshToday->toDateString();
+            $currentDateObj = \Carbon\Carbon::parse($currentDate);
             
-            $canGoWeekBack = $earliestMatch && $currentDate->copy()->subWeek()->gte($earliestMatch->match_date->startOfDay());
-            $canGoDayBack = $earliestMatch && $currentDate->copy()->subDay()->gte($earliestMatch->match_date->startOfDay());
-            $canGoDayForward = $latestMatch && $currentDate->copy()->addDay()->lte($latestMatch->match_date->endOfDay());
-            $canGoWeekForward = $latestMatch && $currentDate->copy()->addWeek()->lte($latestMatch->match_date->endOfDay());
+            $canGoWeekBack = $earliestMatch && $currentDateObj->copy()->subWeek()->gte($earliestMatch->getLocalMatchDate()->startOfDay());
+            $canGoDayBack = $earliestMatch && $currentDateObj->copy()->subDay()->gte($earliestMatch->getLocalMatchDate()->startOfDay());
+            $canGoDayForward = $latestMatch && $currentDateObj->copy()->addDay()->lte($latestMatch->getLocalMatchDate()->endOfDay());
+            $canGoWeekForward = $latestMatch && $currentDateObj->copy()->addWeek()->lte($latestMatch->getLocalMatchDate()->endOfDay());
         @endphp
         
 
         
         <div class="flex items-center gap-2">
             @if($canGoWeekBack)
-                <a href="{{ route('matches.index', ['date' => $currentDate->copy()->subWeek()->format('Y-m-d')]) }}" 
+                <a href="{{ route('matches.index', ['date' => $currentDateObj->copy()->subWeek()->format('Y-m-d')]) }}" 
                    class="px-3 py-2 rounded-lg bg-card text-light hover:bg-gray-700 transition-colors">
                     <i class="fas fa-chevron-left"></i><i class="fas fa-chevron-left"></i>
                 </a>
@@ -93,7 +144,7 @@
             @endif
             
             @if($canGoDayBack)
-                <a href="{{ route('matches.index', ['date' => $currentDate->copy()->subDay()->format('Y-m-d')]) }}" 
+                <a href="{{ route('matches.index', ['date' => $currentDateObj->copy()->subDay()->format('Y-m-d')]) }}" 
                    class="px-3 py-2 rounded-lg bg-card text-light hover:bg-gray-700 transition-colors">
                     <i class="fas fa-chevron-left"></i>
                 </a>
@@ -104,32 +155,32 @@
             @endif
         </div>
         
-        <a href="{{ route('matches.index', ['date' => today()->subDays(2)->format('Y-m-d')]) }}" 
-           class="px-4 py-2 rounded-lg {{ request('date') === today()->subDays(2)->format('Y-m-d') ? 'bg-primary text-white' : 'bg-card text-light hover:bg-gray-700' }} transition-colors">
-            {{ today()->subDays(2)->format('M j') }}
+        <a href="{{ route('matches.index', ['date' => $bangladeshToday->copy()->subDays(2)->format('Y-m-d')]) }}" 
+           class="px-4 py-2 rounded-lg {{ request('date') === $bangladeshToday->copy()->subDays(2)->format('Y-m-d') ? 'bg-primary text-white' : 'bg-card text-light hover:bg-gray-700' }} transition-colors">
+            {{ $bangladeshToday->copy()->subDays(2)->format('M j') }}
         </a>
-        <a href="{{ route('matches.index', ['date' => today()->subDay()->format('Y-m-d')]) }}" 
-           class="px-4 py-2 rounded-lg {{ request('date') === today()->subDay()->format('Y-m-d') ? 'bg-primary text-white' : 'bg-card text-light hover:bg-gray-700' }} transition-colors">
+        <a href="{{ route('matches.index', ['date' => $bangladeshToday->copy()->subDay()->format('Y-m-d')]) }}" 
+           class="px-4 py-2 rounded-lg {{ request('date') === $bangladeshToday->copy()->subDay()->format('Y-m-d') ? 'bg-primary text-white' : 'bg-card text-light hover:bg-gray-700' }} transition-colors">
             Yesterday
         </a>
-        <a href="{{ route('matches.index', ['date' => today()->format('Y-m-d')]) }}" 
-           class="px-4 py-2 rounded-lg {{ !request('date') || request('date') === today()->format('Y-m-d') ? 'bg-primary text-white' : 'bg-card text-light hover:bg-gray-700' }} transition-colors">
+        <a href="{{ route('matches.index', ['date' => $bangladeshToday->format('Y-m-d')]) }}" 
+           class="px-4 py-2 rounded-lg {{ !request('date') || request('date') === $bangladeshToday->format('Y-m-d') ? 'bg-primary text-white' : 'bg-card text-light hover:bg-gray-700' }} transition-colors">
             Today
         </a>
-        <a href="{{ route('matches.index', ['date' => today()->addDay()->format('Y-m-d')]) }}" 
-           class="px-4 py-2 rounded-lg {{ request('date') === today()->addDay()->format('Y-m-d') ? 'bg-primary text-white' : 'bg-card text-light hover:bg-gray-700' }} transition-colors">
+        <a href="{{ route('matches.index', ['date' => $bangladeshToday->copy()->addDay()->format('Y-m-d')]) }}" 
+           class="px-4 py-2 rounded-lg {{ request('date') === $bangladeshToday->copy()->addDay()->format('Y-m-d') ? 'bg-primary text-white' : 'bg-card text-light hover:bg-gray-700' }} transition-colors">
             Tomorrow
         </a>
-        <a href="{{ route('matches.index', ['date' => today()->addDays(2)->format('Y-m-d')]) }}" 
-           class="px-4 py-2 rounded-lg {{ request('date') === today()->addDays(2)->format('Y-m-d') ? 'bg-primary text-white' : 'bg-card text-light hover:bg-gray-700' }} transition-colors">
-            {{ today()->addDays(2)->format('M j') }}
+        <a href="{{ route('matches.index', ['date' => $bangladeshToday->copy()->addDays(2)->format('Y-m-d')]) }}" 
+           class="px-4 py-2 rounded-lg {{ request('date') === $bangladeshToday->copy()->addDays(2)->format('Y-m-d') ? 'bg-primary text-white' : 'bg-card text-light hover:bg-gray-700' }} transition-colors">
+            {{ $bangladeshToday->copy()->addDays(2)->format('M j') }}
         </a>
         
 
         
         <div class="flex items-center gap-2">
             @if($canGoDayForward)
-                <a href="{{ route('matches.index', ['date' => $currentDate->copy()->addDay()->format('Y-m-d')]) }}" 
+                <a href="{{ route('matches.index', ['date' => $currentDateObj->copy()->addDay()->format('Y-m-d')]) }}" 
                    class="px-3 py-2 rounded-lg bg-card text-light hover:bg-gray-700 transition-colors">
                     <i class="fas fa-chevron-right"></i>
                 </a>
@@ -140,7 +191,7 @@
             @endif
             
             @if($canGoWeekForward)
-                <a href="{{ route('matches.index', ['date' => $currentDate->copy()->addWeek()->format('Y-m-d')]) }}" 
+                <a href="{{ route('matches.index', ['date' => $currentDateObj->copy()->addWeek()->format('Y-m-d')]) }}" 
                    class="px-3 py-2 rounded-lg bg-card text-light hover:bg-gray-700 transition-colors">
                     <i class="fas fa-chevron-right"></i><i class="fas fa-chevron-right"></i>
                 </a>
@@ -202,20 +253,20 @@
                                         @endif
                                     @elseif($match->status === 'finished')
                                         <div class="text-xs bg-gray-600 text-white px-2 py-1 rounded mb-1">FT</div>
-                                        <div class="text-xs text-muted">{{ $match->match_date->format('H:i') }}</div>
+                                        <div class="text-xs text-muted">{{ $match->getLocalMatchDate()->format('g:i A') }}</div>
                                     @elseif($match->status === 'scheduled')
-                                        <div class="text-sm text-light font-medium">{{ $match->match_date->format('H:i') }}</div>
-                                        <div class="text-xs text-muted">{{ $match->match_date->format('M j') }}</div>
+                                        <div class="text-sm text-light font-medium">{{ $match->getLocalMatchDate()->format('g:i A') }}</div>
+                                        <div class="text-xs text-muted">{{ $match->getLocalMatchDate()->format('M j') }}</div>
                                     @else
                                         <div class="text-xs text-yellow-500 px-2 py-1 rounded">{{ strtoupper($match->status) }}</div>
-                                        <div class="text-xs text-muted">{{ $match->match_date->format('H:i') }}</div>
+                                        <div class="text-xs text-muted">{{ $match->getLocalMatchDate()->format('g:i A') }}</div>
                                     @endif
                                 </div>
                                 
                                 <!-- Home Team Column -->
                                 <div class="col-span-3 flex items-center justify-end space-x-3">
                                     <span class="text-light font-medium text-right truncate">{{ $match->homeTeam->name }}</span>
-                                    <img src="{{ $match->homeTeam->logo ?? '/images/default-logo.png' }}" 
+                                    <img src="{{ $match->homeTeam->logo ?? '/images/default-logo.svg' }}" 
                                          alt="{{ $match->homeTeam->name }}" 
                                          class="w-8 h-8 rounded-full flex-shrink-0">
                                 </div>
@@ -233,7 +284,7 @@
                                 
                                 <!-- Away Team Column -->
                                 <div class="col-span-3 flex items-center justify-start space-x-3">
-                                    <img src="{{ $match->awayTeam->logo ?? '/images/default-logo.png' }}" 
+                                    <img src="{{ $match->awayTeam->logo ?? '/images/default-logo.svg' }}" 
                                          alt="{{ $match->awayTeam->name }}" 
                                          class="w-8 h-8 rounded-full flex-shrink-0">
                                     <span class="text-light font-medium text-left truncate">{{ $match->awayTeam->name }}</span>
@@ -260,7 +311,7 @@
                                         @elseif($match->status === 'finished')
                                             <span class="text-xs bg-gray-600 text-white px-2 py-1 rounded">FT</span>
                                         @elseif($match->status === 'scheduled')
-                                            <span class="text-sm text-light font-medium">{{ $match->match_date->format('H:i') }}</span>
+                                            <span class="text-sm text-light font-medium">{{ $match->getLocalMatchDate()->format('g:i A') }}</span>
                                         @else
                                             <span class="text-xs text-yellow-500 px-2 py-1 rounded">{{ strtoupper($match->status) }}</span>
                                         @endif
@@ -276,7 +327,7 @@
                                     <!-- Home Team -->
                                     <div class="col-span-2 flex items-center justify-end space-x-2">
                                         <span class="text-light font-medium text-right text-sm truncate">{{ $match->homeTeam->short_name ?? $match->homeTeam->name }}</span>
-                                        <img src="{{ $match->homeTeam->logo ?? '/images/default-logo.png' }}" 
+                                        <img src="{{ $match->homeTeam->logo ?? '/images/default-logo.svg' }}" 
                                              alt="{{ $match->homeTeam->name }}" 
                                              class="w-6 h-6 rounded-full flex-shrink-0">
                                     </div>
@@ -294,7 +345,7 @@
                                     
                                     <!-- Away Team -->
                                     <div class="col-span-2 flex items-center justify-start space-x-2">
-                                        <img src="{{ $match->awayTeam->logo ?? '/images/default-logo.png' }}" 
+                                        <img src="{{ $match->awayTeam->logo ?? '/images/default-logo.svg' }}" 
                                              alt="{{ $match->awayTeam->name }}" 
                                              class="w-6 h-6 rounded-full flex-shrink-0">
                                         <span class="text-light font-medium text-left text-sm truncate">{{ $match->awayTeam->short_name ?? $match->awayTeam->name }}</span>
@@ -320,7 +371,7 @@
                     @endphp
                     No matches scheduled for {{ $requestedDate->format('F j, Y') }}.
                     @if($earliestMatch && $latestMatch)
-                        <br><small class="text-xs">Available matches from {{ $earliestMatch->match_date->format('M j, Y') }} to {{ $latestMatch->match_date->format('M j, Y') }}</small>
+                        <br><small class="text-xs">Available matches from {{ $earliestMatch->getLocalMatchDate()->format('M j, Y') }} to {{ $latestMatch->getLocalMatchDate()->format('M j, Y') }}</small>
                     @endif
                 @else
                     No matches found with the current filters.

@@ -102,7 +102,7 @@
                                 </td>
                                 <td class="px-4 py-4">
                                     <div class="flex items-center space-x-3">
-                                        <img src="{{ $standing['team']['crest'] ?? '/images/default-logo.png' }}" 
+                                        <img src="{{ $standing['team']['crest'] ?? '/images/default-logo.svg' }}" 
                                              alt="{{ $standing['team']['name'] }}" 
                                              class="w-10 h-10 rounded-full">
                                         <div>
@@ -209,7 +209,7 @@
                         <div class="flex-1 min-w-0">
                             <div class="text-light font-medium truncate">{{ $scorer['player']['name'] }}</div>
                             <div class="flex items-center space-x-2 text-xs text-muted">
-                                <img src="{{ $scorer['team']['crest'] ?? '/images/default-logo.png' }}" 
+                                <img src="{{ $scorer['team']['crest'] ?? '/images/default-logo.svg' }}" 
                                      alt="{{ $scorer['team']['name'] }}" 
                                      class="w-4 h-4 rounded-full">
                                 <span class="truncate">{{ $scorer['team']['shortName'] ?? $scorer['team']['name'] }}</span>

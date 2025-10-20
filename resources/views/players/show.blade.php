@@ -166,7 +166,7 @@
                             @foreach($recentMatches as $stat)
                                 <tr class="hover:bg-gray-700">
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                                        {{ \Carbon\Carbon::parse($stat->match->match_date)->format('M d') }}
+                                        {{ $stat->match->getLocalMatchDate()->format('M d') }}
                                     </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-white">
                                         {{ $stat->match->homeTeam->short_name }} vs {{ $stat->match->awayTeam->short_name }}

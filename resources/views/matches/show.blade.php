@@ -47,7 +47,7 @@
             <div class="flex items-center space-x-8">
                 <!-- Home Team -->
                 <div class="text-center">
-                    <img src="{{ $match->homeTeam->logo ?? '/images/default-logo.png' }}" 
+                    <img src="{{ $match->homeTeam->logo ?? '/images/default-logo.svg' }}" 
                          alt="{{ $match->homeTeam->name }}" 
                          class="w-24 h-24 mx-auto mb-4 rounded-full">
                     <h2 class="text-xl font-bold text-light">{{ $match->homeTeam->name }}</h2>
@@ -89,7 +89,7 @@
 
                 <!-- Away Team -->
                 <div class="text-center">
-                    <img src="{{ $match->awayTeam->logo ?? '/images/default-logo.png' }}" 
+                    <img src="{{ $match->awayTeam->logo ?? '/images/default-logo.svg' }}" 
                          alt="{{ $match->awayTeam->name }}" 
                          class="w-24 h-24 mx-auto mb-4 rounded-full">
                     <h2 class="text-xl font-bold text-light">{{ $match->awayTeam->name }}</h2>
@@ -313,7 +313,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <!-- Home Team -->
                     <div class="text-center">
-                        <img src="{{ $match->homeTeam->logo ?? '/images/default-logo.png' }}" 
+                        <img src="{{ $match->homeTeam->logo ?? '/images/default-logo.svg' }}" 
                              alt="{{ $match->homeTeam->name }}" 
                              class="w-16 h-16 mx-auto mb-3 rounded-full">
                         <h4 class="text-lg font-bold text-light mb-2">{{ $match->homeTeam->name }}</h4>
@@ -350,7 +350,7 @@
                     
                     <!-- Away Team -->
                     <div class="text-center">
-                        <img src="{{ $match->awayTeam->logo ?? '/images/default-logo.png' }}" 
+                        <img src="{{ $match->awayTeam->logo ?? '/images/default-logo.svg' }}" 
                              alt="{{ $match->awayTeam->name }}" 
                              class="w-16 h-16 mx-auto mb-3 rounded-full">
                         <h4 class="text-lg font-bold text-light mb-2">{{ $match->awayTeam->name }}</h4>

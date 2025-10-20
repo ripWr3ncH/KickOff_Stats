@@ -126,8 +126,26 @@
     @else
         <div class="text-center py-12">
             <div class="text-6xl mb-4">⚽</div>
-            <h3 class="text-xl font-semibold text-white mb-2">No Players Found</h3>
-            <p class="text-gray-400 mb-4">Try adjusting your search criteria or sync player data from the API.</p>
+            <h3 class="text-xl font-semibold text-white mb-2">No Players Available</h3>
+            <p class="text-gray-400 mb-4">Players are automatically synced from live matches and team data.</p>
+            <p class="text-gray-400 mb-6">Start the auto-updater or sync recent matches to populate player data.</p>
+            <div class="space-x-4">
+                <form method="GET" class="inline">
+                    @foreach(request()->query() as $key => $value)
+                        @if($key !== 'sync_players')
+                            <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                        @endif
+                    @endforeach
+                    <button type="submit" name="sync_players" value="1" 
+                            class="bg-primary hover:bg-primary/80 text-white px-6 py-3 rounded-lg font-medium">
+                        🔄 Sync Players from API
+                    </button>
+                </form>
+                <a href="{{ route('matches.index') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium inline-block">
+                    📺 View Live Matches
+                </a>
+            </div>
+        </div>
         </div>
     @endif
 </div>
