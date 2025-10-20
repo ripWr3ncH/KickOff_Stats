@@ -19,7 +19,8 @@ class Team extends Model
         'founded',
         'description',
         'primary_color',
-        'secondary_color'
+        'secondary_color',
+        'api_id'
     ];
 
     public function league(): BelongsTo
@@ -46,5 +47,13 @@ class Team extends Model
     {
         return FootballMatch::where('home_team_id', $this->id)
             ->orWhere('away_team_id', $this->id);
+    }
+
+    /**
+     * Users who have favorited this team.
+     */
+    public function favoritedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'user_favorite_teams');
     }
 }

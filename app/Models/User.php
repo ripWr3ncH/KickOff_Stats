@@ -45,4 +45,28 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    /**
+     * The user's favorite teams.
+     */
+    public function favoriteTeams()
+    {
+        return $this->belongsToMany(Team::class, 'user_favorite_teams');
+    }
+
+    /**
+     * Check if user has favorited a specific team.
+     */
+    public function hasFavoritedTeam($teamId)
+    {
+        return $this->favoriteTeams()->where('team_id', $teamId)->exists();
+    }
+
+    /**
+     * The user's dream teams.
+     */
+    public function dreamTeams()
+    {
+        return $this->hasMany(DreamTeam::class);
+    }
 }

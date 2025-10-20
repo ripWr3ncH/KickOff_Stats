@@ -22,7 +22,8 @@ class Player extends Model
         'photo',
         'market_value',
         'bio',
-        'is_active'
+        'is_active',
+        'api_id'
     ];
 
     protected $casts = [
@@ -56,5 +57,10 @@ class Player extends Model
     public function getTotalAssistsAttribute()
     {
         return $this->stats()->sum('assists');
+    }
+
+    public function getPhotoUrlAttribute()
+    {
+        return $this->photo ? asset('storage/' . $this->photo) : null;
     }
 }
