@@ -15,6 +15,14 @@ A modern, real-time football statistics and live scores web application built wi
 - **Dynamic score updates** without page refresh
 - **Match timeline** with goals, cards, and substitutions
 
+### 📰 Football News
+- **Latest football news** from trusted sources (BBC, ESPN, Goal, Sky Sports)
+- **Team-specific news** for your favorite clubs
+- **League news** for Premier League, La Liga, Serie A, and more
+- **Search functionality** to find specific news topics
+- **Trending news** section with top sports headlines
+- **Cached content** for improved performance
+
 ### 🏆 League Coverage
 - **Premier League** (England)
 - **La Liga** (Spain)  
@@ -125,6 +133,12 @@ Visit `http://localhost:8000` to access the application.
 2. Subscribe to API-Football
 3. Add to `.env`: `API_FOOTBALL_KEY=your_key_here`
 
+#### NewsAPI.org (For Football News)
+1. Register at [NewsAPI.org](https://newsapi.org/register)
+2. Get your free API key (1,000 requests/day)
+3. Add to `.env`: `NEWS_API_KEY=your_key_here`
+4. **Note**: News feature works with fallback content even without API key
+
 ### Database Configuration
 Create a MySQL database and update your `.env` file with the credentials.
 
@@ -148,6 +162,9 @@ php artisan data:check
 
 # Check team logo status
 php artisan teams:check-logos
+
+# Test football news service
+php artisan news:test
 ```
 
 #### Background Processing
@@ -167,6 +184,7 @@ php artisan queue:work
 | `/api/matches` | GET | Get all matches |
 | `/api/leagues/{id}` | GET | Get league details and standings |
 | `/api/teams/{id}` | GET | Get team information |
+| `/api/news` | GET | Get latest football news |
 
 ### Frontend Features
 
