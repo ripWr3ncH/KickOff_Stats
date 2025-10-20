@@ -80,13 +80,27 @@ class SyncTodayMatches extends Command
                 $homeTeam = $this->findOrCreateTeam($matchData['homeTeam']['name'], $matchData['homeTeam']['shortName'] ?? null);
                 $awayTeam = $this->findOrCreateTeam($matchData['awayTeam']['name'], $matchData['awayTeam']['shortName'] ?? null);
 
-                // Check if match already exists (use exact match date from API)
-                $existingMatch = FootballMatch::where('league_id', $league->id)
-                    ->where('home_team_id', $homeTeam->id)
-                    ->where('away_team_id', $awayTeam->id)
-                    ->whereDate('match_date', $matchDate->toDateString())
-                    ->whereTime('match_date', $matchDate->format('H:i:s'))
-                    ->first();
+                // Check if match already exists - try multiple ways
+                // 1. Try by API match ID first (most reliable)
+                $existingMatch = FootballMatch::where('api_match_id', $matchData['id'])->first();
+                
+                // 2. If not found, try by date and teams
+                if (!$existingMatch) {
+                    $existingMatch = FootballMatch::where('league_id', $league->id)
+                        ->where('home_team_id', $homeTeam->id)
+                        ->where('away_team_id', $awayTeam->id)
+                        ->whereDate('match_date', $matchDate->toDateString())
+                        ->first();
+                }
+                
+                // 3. Check for reverse fixture on same date (home/away swapped)
+                if (!$existingMatch) {
+                    $existingMatch = FootballMatch::where('league_id', $league->id)
+                        ->where('home_team_id', $awayTeam->id)
+                        ->where('away_team_id', $homeTeam->id)
+                        ->whereDate('match_date', $matchDate->toDateString())
+                        ->first();
+                }
 
                 if (!$existingMatch) {
                     FootballMatch::create([
@@ -134,19 +148,74 @@ class SyncTodayMatches extends Command
         $team = Team::where('name', $name)->first();
         
         if (!$team) {
-            // Try flexible matching
-            $cleanName = str_replace([' FC', 'FC ', ' CF'], '', $name);
-            $team = Team::where('name', 'like', "%{$cleanName}%")->first();
+            // Comprehensive team name variations for better matching
+            $variations = [
+                // Remove common suffixes
+                str_replace([' FC', ' CF', ' AFC', ' United FC', ' City FC', ' Hotspur FC', 
+                            'FC ', 'CF ', 'AFC ', 'Fútbol Club', 'Club de Fútbol', 'Calcio',
+                            'Club', ' 1909', ' 1907', ' 1963', 'de Madrid', 'de Barcelona', 
+                            'Balompié', 'de Fútbol', 'Società Sportiva', 'CFC', 'GFC'], '', $name),
+                // Simplify 'Deportivo' prefix
+                str_replace('Deportivo ', '', $name),
+                str_replace('Deportivo Alavés', 'Alaves', $name),
+                // Handle 'Real' prefix
+                str_replace('Real ', '', $name),
+                // Handle 'Athletic' variations
+                str_replace('Athletic Club', 'Athletic Bilbao', $name),
+                str_replace('Athletic Bilbao', 'Athletic Club', $name),
+            ];
+            
+            // Try each variation
+            foreach ($variations as $variation) {
+                $cleanName = trim($variation);
+                if (empty($cleanName)) continue;
+                
+                $team = Team::where('name', 'like', "%{$cleanName}%")
+                    ->orWhere('name', $cleanName)
+                    ->first();
+                
+                if ($team) {
+                    $this->comment("  → Matched '{$name}' to existing team '{$team->name}'");
+                    return $team;
+                }
+            }
+            
+            // Try matching by significant words (at least 5 characters)
+            $words = explode(' ', $name);
+            foreach ($words as $word) {
+                if (strlen($word) >= 5) {
+                    $team = Team::where('name', 'like', "%{$word}%")->first();
+                    if ($team) {
+                        $this->comment("  → Matched '{$name}' to existing team '{$team->name}' via keyword");
+                        return $team;
+                    }
+                }
+            }
+        } else {
+            return $team;
         }
 
+        // Only create if no match found
         if (!$team) {
-            // Create new team if not found
+            $slug = \Illuminate\Support\Str::slug($name);
+            
+            // Check if slug already exists and make it unique
+            $originalSlug = $slug;
+            $counter = 1;
+            while (Team::where('slug', $slug)->exists()) {
+                $slug = $originalSlug . '-' . $counter;
+                $counter++;
+            }
+            
+            $shortName = $shortName ?? substr($name, 0, 10); // Max 10 characters
             $team = Team::create([
                 'name' => $name,
-                'short_name' => $shortName ?? substr($name, 0, 3),
+                'short_name' => substr($shortName, 0, 10), // Ensure max 10 chars
+                'slug' => $slug,
+                'city' => 'Unknown', // Required field
                 'league_id' => 1, // Default to first league
             ]);
-            $this->warn("Created new team: {$name}");
+            $this->warn("  ⚠️  Created new team: {$name} (no existing match found)");
         }
 
         return $team;
