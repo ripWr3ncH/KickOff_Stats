@@ -14,6 +14,7 @@ class Team extends Model
         'slug',
         'league_id',
         'logo',
+        'logo_url',
         'city',
         'stadium',
         'founded',

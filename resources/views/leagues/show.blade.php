@@ -69,7 +69,7 @@
                             </td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center space-x-3">
-                                    <img src="{{ $standing['team']['crest'] ?? $standing['team']->logo ?? '/images/default-logo.svg' }}" 
+                                    <img src="{{ $standing['team']['crest'] ?? $standing['team']->logo_url ?? '/images/default-logo.svg' }}" 
                                          alt="{{ $standing['team']['name'] ?? $standing['team']->name }}" 
                                          class="w-8 h-8 rounded-full">
                                     <span class="text-light font-medium">{{ $standing['team']['shortName'] ?? $standing['team']['name'] ?? $standing['team']->name }}</span>
@@ -130,7 +130,7 @@
                 @forelse($recentMatches as $match)
                 <div class="flex items-center justify-between py-3 border-b border-gray-700 last:border-b-0">
                     <div class="flex items-center space-x-2 flex-1">
-                        <img src="{{ $match->homeTeam->logo ?? '/images/default-logo.svg' }}" 
+                        <img src="{{ $match->homeTeam->logo_url ?? '/images/default-logo.svg' }}" 
                              alt="{{ $match->homeTeam->name }}" 
                              class="w-6 h-6 rounded-full">
                         <span class="text-light text-sm">{{ $match->homeTeam->short_name }}</span>
@@ -145,7 +145,7 @@
                     </div>
                     <div class="flex items-center space-x-2 flex-1 justify-end">
                         <span class="text-light text-sm">{{ $match->awayTeam->short_name }}</span>
-                        <img src="{{ $match->awayTeam->logo ?? '/images/default-logo.svg' }}" 
+                        <img src="{{ $match->awayTeam->logo_url ?? '/images/default-logo.svg' }}" 
                              alt="{{ $match->awayTeam->name }}" 
                              class="w-6 h-6 rounded-full">
                     </div>
@@ -165,7 +165,7 @@
                 @forelse($upcomingMatches as $match)
                 <div class="flex items-center justify-between py-3 border-b border-gray-700 last:border-b-0">
                     <div class="flex items-center space-x-2 flex-1">
-                        <img src="{{ $match->homeTeam->logo ?? '/images/default-logo.svg' }}" 
+                        <img src="{{ $match->homeTeam->logo_url ?? '/images/default-logo.svg' }}" 
                              alt="{{ $match->homeTeam->name }}" 
                              class="w-6 h-6 rounded-full">
                         <span class="text-light text-sm">{{ $match->homeTeam->short_name }}</span>
@@ -177,7 +177,7 @@
                     </div>
                     <div class="flex items-center space-x-2 flex-1 justify-end">
                         <span class="text-light text-sm">{{ $match->awayTeam->short_name }}</span>
-                        <img src="{{ $match->awayTeam->logo ?? '/images/default-logo.svg' }}" 
+                        <img src="{{ $match->awayTeam->logo_url ?? '/images/default-logo.svg' }}" 
                              alt="{{ $match->awayTeam->name }}" 
                              class="w-6 h-6 rounded-full">
                     </div>

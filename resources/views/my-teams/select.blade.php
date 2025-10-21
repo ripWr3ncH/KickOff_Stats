@@ -47,8 +47,8 @@
                              data-team-name="{{ strtolower($team->name) }}">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3 min-w-0 flex-1">
-                                    @if($team->logo)
-                                        <img src="{{ $team->logo }}" alt="{{ $team->name }}" class="w-10 h-10 flex-shrink-0">
+                                    @if($team->logo_url)
+                                        <img src="{{ $team->logo_url }}" alt="{{ $team->name }}" class="w-10 h-10 flex-shrink-0">
                                     @else
                                         <div class="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center flex-shrink-0">
                                             <i class="fas fa-futbol text-blue-600 dark:text-blue-400"></i>

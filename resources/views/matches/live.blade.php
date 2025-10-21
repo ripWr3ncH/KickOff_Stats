@@ -55,7 +55,7 @@
                             <!-- Home Team -->
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3 flex-1">
-                                    <img src="{{ $match->homeTeam->logo ?? '/images/default-logo.svg' }}" 
+                                    <img src="{{ $match->homeTeam->logo_url ?? '/images/default-logo.svg' }}" 
                                          alt="{{ $match->homeTeam->name }}" 
                                          class="w-8 h-8 rounded-full">
                                     <span class="text-light font-medium truncate">{{ $match->homeTeam->name }}</span>
@@ -68,7 +68,7 @@
                             <!-- Away Team -->
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3 flex-1">
-                                    <img src="{{ $match->awayTeam->logo ?? '/images/default-logo.svg' }}" 
+                                    <img src="{{ $match->awayTeam->logo_url ?? '/images/default-logo.svg' }}" 
                                          alt="{{ $match->awayTeam->name }}" 
                                          class="w-8 h-8 rounded-full">
                                     <span class="text-light font-medium truncate">{{ $match->awayTeam->name }}</span>

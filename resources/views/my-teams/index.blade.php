@@ -37,8 +37,8 @@
             @foreach($favoriteTeams as $team)
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border border-gray-200 dark:border-gray-700">
                     <div class="flex items-center mb-4">
-                        @if($team->logo)
-                            <img src="{{ $team->logo }}" alt="{{ $team->name }}" class="w-12 h-12 mr-4">
+                        @if($team->logo_url)
+                            <img src="{{ $team->logo_url }}" alt="{{ $team->name }}" class="w-12 h-12 mr-4">
                         @else
                             <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mr-4">
                                 <i class="fas fa-futbol text-blue-600 dark:text-blue-400"></i>
@@ -79,8 +79,8 @@
                                 <div class="flex items-center space-x-4">
                                     <!-- Home Team -->
                                     <div class="flex items-center space-x-2 min-w-0 flex-1">
-                                        @if($match->homeTeam->logo)
-                                            <img src="{{ $match->homeTeam->logo }}" alt="{{ $match->homeTeam->name }}" class="w-8 h-8">
+                                        @if($match->homeTeam->logo_url)
+                                            <img src="{{ $match->homeTeam->logo_url }}" alt="{{ $match->homeTeam->name }}" class="w-8 h-8">
                                         @endif
                                         <span class="font-medium text-gray-900 dark:text-white truncate">{{ $match->homeTeam->name }}</span>
                                     </div>
@@ -109,8 +109,8 @@
                                     
                                     <!-- Away Team -->
                                     <div class="flex items-center space-x-2 min-w-0 flex-1 flex-row-reverse">
-                                        @if($match->awayTeam->logo)
-                                            <img src="{{ $match->awayTeam->logo }}" alt="{{ $match->awayTeam->name }}" class="w-8 h-8">
+                                        @if($match->awayTeam->logo_url)
+                                            <img src="{{ $match->awayTeam->logo_url }}" alt="{{ $match->awayTeam->name }}" class="w-8 h-8">
                                         @endif
                                         <span class="font-medium text-gray-900 dark:text-white truncate">{{ $match->awayTeam->name }}</span>
                                     </div>

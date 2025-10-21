@@ -24,8 +24,8 @@
                 <!-- Team & League -->
                 @if($player->team)
                     <div class="flex items-center justify-center md:justify-start space-x-2 mb-2">
-                        @if($player->team->logo)
-                            <img src="{{ $player->team->logo }}" alt="{{ $player->team->name }}" class="w-6 h-6">
+                        @if($player->team->logo_url)
+                            <img src="{{ $player->team->logo_url }}" alt="{{ $player->team->name }}" class="w-6 h-6">
                         @endif
                         <span class="text-lg text-gray-300">{{ $player->team->name }}</span>
                     </div>

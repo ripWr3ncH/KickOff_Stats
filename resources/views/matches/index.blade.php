@@ -266,7 +266,7 @@
                                 <!-- Home Team Column -->
                                 <div class="col-span-3 flex items-center justify-end space-x-3">
                                     <span class="text-light font-medium text-right truncate">{{ $match->homeTeam->name }}</span>
-                                    <img src="{{ $match->homeTeam->logo ?? '/images/default-logo.svg' }}" 
+                                    <img src="{{ $match->homeTeam->logo_url ?? '/images/default-logo.svg' }}" 
                                          alt="{{ $match->homeTeam->name }}" 
                                          class="w-8 h-8 rounded-full flex-shrink-0">
                                 </div>
@@ -284,7 +284,7 @@
                                 
                                 <!-- Away Team Column -->
                                 <div class="col-span-3 flex items-center justify-start space-x-3">
-                                    <img src="{{ $match->awayTeam->logo ?? '/images/default-logo.svg' }}" 
+                                    <img src="{{ $match->awayTeam->logo_url ?? '/images/default-logo.svg' }}" 
                                          alt="{{ $match->awayTeam->name }}" 
                                          class="w-8 h-8 rounded-full flex-shrink-0">
                                     <span class="text-light font-medium text-left truncate">{{ $match->awayTeam->name }}</span>
@@ -327,7 +327,7 @@
                                     <!-- Home Team -->
                                     <div class="col-span-2 flex items-center justify-end space-x-2">
                                         <span class="text-light font-medium text-right text-sm truncate">{{ $match->homeTeam->short_name ?? $match->homeTeam->name }}</span>
-                                        <img src="{{ $match->homeTeam->logo ?? '/images/default-logo.svg' }}" 
+                                        <img src="{{ $match->homeTeam->logo_url ?? '/images/default-logo.svg' }}" 
                                              alt="{{ $match->homeTeam->name }}" 
                                              class="w-6 h-6 rounded-full flex-shrink-0">
                                     </div>
@@ -345,7 +345,7 @@
                                     
                                     <!-- Away Team -->
                                     <div class="col-span-2 flex items-center justify-start space-x-2">
-                                        <img src="{{ $match->awayTeam->logo ?? '/images/default-logo.svg' }}" 
+                                        <img src="{{ $match->awayTeam->logo_url ?? '/images/default-logo.svg' }}" 
                                              alt="{{ $match->awayTeam->name }}" 
                                              class="w-6 h-6 rounded-full flex-shrink-0">
                                         <span class="text-light font-medium text-left text-sm truncate">{{ $match->awayTeam->short_name ?? $match->awayTeam->name }}</span>

@@ -22,7 +22,7 @@
                 </div>
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-2 flex-1 transform group-hover:scale-105 transition-transform duration-300">
-                        <img src="{{ $match->homeTeam->logo ?? '/images/default-logo.svg' }}" 
+                        <img src="{{ $match->homeTeam->logo_url ?? '/images/default-logo.svg' }}" 
                              alt="{{ $match->homeTeam->name }}" 
                              class="w-8 h-8 rounded-full group-hover:shadow-lg transition-all duration-300"
                              onerror="this.src='/images/default-logo.svg'">
@@ -35,7 +35,7 @@
                     </div>
                     <div class="flex items-center space-x-2 flex-1 justify-end transform group-hover:scale-105 transition-transform duration-300">
                         <span class="text-light text-sm group-hover:text-primary transition-colors duration-300">{{ $match->awayTeam->short_name }}</span>
-                        <img src="{{ $match->awayTeam->logo ?? '/images/default-logo.svg' }}" 
+                        <img src="{{ $match->awayTeam->logo_url ?? '/images/default-logo.svg' }}" 
                              alt="{{ $match->awayTeam->name }}" 
                              class="w-8 h-8 rounded-full group-hover:shadow-lg transition-all duration-300"
                              onerror="this.src='/images/default-logo.svg'">
@@ -67,7 +67,7 @@
                             {{ $match->getLocalMatchDate()->format('g:i A') }}
                         </div>
                         <div class="flex items-center space-x-2 transform group-hover:scale-105 transition-transform duration-300">
-                            <img src="{{ $match->homeTeam->logo ?? '/images/default-logo.svg' }}" 
+                            <img src="{{ $match->homeTeam->logo_url ?? '/images/default-logo.svg' }}" 
                                  alt="{{ $match->homeTeam->name }}" 
                                  class="w-6 h-6 rounded-full group-hover:shadow-md transition-all duration-300"
                                  onerror="this.src='/images/default-logo.svg'">
@@ -93,7 +93,7 @@
                     
                     <div class="flex items-center space-x-2 flex-1 justify-end">
                         <span class="text-light text-sm">{{ $match->awayTeam->short_name }}</span>
-                        <img src="{{ $match->awayTeam->logo ?? '/images/default-logo.svg' }}" 
+                        <img src="{{ $match->awayTeam->logo_url ?? '/images/default-logo.svg' }}" 
                              alt="{{ $match->awayTeam->name }}" 
                              class="w-6 h-6 rounded-full"
                              onerror="this.src='/images/default-logo.svg'">
@@ -158,7 +158,7 @@
                         @foreach($recentResults as $match)
                         <div class="result-item flex items-center justify-between py-2 border-b border-gray-700 last:border-b-0 hover:bg-gray-700/30 rounded px-2 transition-all duration-300 group cursor-pointer transform hover:scale-105" onclick="window.location.href='{{ route('matches.show', $match->id) }}'">
                             <div class="flex items-center space-x-2 flex-1 transform group-hover:translate-x-1 transition-transform duration-300">
-                                <img src="{{ $match->homeTeam->logo ?? '/images/default-logo.svg' }}" 
+                                <img src="{{ $match->homeTeam->logo_url ?? '/images/default-logo.svg' }}" 
                                      alt="{{ $match->homeTeam->name }}" 
                                      class="w-5 h-5 rounded-full group-hover:shadow-sm transition-all duration-300">
                                 <span class="text-light text-sm group-hover:text-primary transition-colors duration-300">{{ $match->homeTeam->short_name }}</span>
@@ -170,7 +170,7 @@
                             </div>
                             <div class="flex items-center space-x-2 flex-1 justify-end transform group-hover:-translate-x-1 transition-transform duration-300">
                                 <span class="text-light text-sm group-hover:text-primary transition-colors duration-300">{{ $match->awayTeam->short_name }}</span>
-                                <img src="{{ $match->awayTeam->logo ?? '/images/default-logo.svg' }}" 
+                                <img src="{{ $match->awayTeam->logo_url ?? '/images/default-logo.svg' }}" 
                                      alt="{{ $match->awayTeam->name }}" 
                                      class="w-5 h-5 rounded-full group-hover:shadow-sm transition-all duration-300">
                             </div>
@@ -198,7 +198,7 @@
                         @foreach($upcomingMatches as $match)
                         <div class="upcoming-item flex items-center justify-between py-2 border-b border-gray-700 last:border-b-0 hover:bg-gray-700/30 rounded px-2 transition-all duration-300 group cursor-pointer relative transform hover:scale-105" onclick="window.location.href='{{ route('matches.show', $match->id) }}'">
                             <div class="flex items-center space-x-2 flex-1 transform group-hover:translate-x-1 transition-transform duration-300">
-                                <img src="{{ $match->homeTeam->logo ?? '/images/default-logo.svg' }}" 
+                                <img src="{{ $match->homeTeam->logo_url ?? '/images/default-logo.svg' }}" 
                                      alt="{{ $match->homeTeam->name }}" 
                                      class="w-5 h-5 rounded-full group-hover:shadow-sm transition-all duration-300">
                                 <span class="text-light text-sm group-hover:text-primary transition-colors duration-300">{{ $match->homeTeam->short_name }}</span>
@@ -210,7 +210,7 @@
                             </div>
                             <div class="flex items-center space-x-2 flex-1 justify-end transform group-hover:-translate-x-1 transition-transform duration-300">
                                 <span class="text-light text-sm group-hover:text-primary transition-colors duration-300">{{ $match->awayTeam->short_name }}</span>
-                                <img src="{{ $match->awayTeam->logo ?? '/images/default-logo.svg' }}" 
+                                <img src="{{ $match->awayTeam->logo_url ?? '/images/default-logo.svg' }}" 
                                      alt="{{ $match->awayTeam->name }}" 
                                      class="w-5 h-5 rounded-full group-hover:shadow-sm transition-all duration-300">
                             </div>
