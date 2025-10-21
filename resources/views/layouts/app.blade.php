@@ -500,17 +500,24 @@
                                 >
                             </div>
 
-                            <!-- Remember Me -->
-                            <div class="flex items-center">
-                                <input 
-                                    id="modal-remember" 
-                                    name="remember" 
-                                    type="checkbox"
-                                    class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600"
-                                >
-                                <label for="modal-remember" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
-                                    Remember me
-                                </label>
+                            <!-- Remember Me & Forgot Password -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <input 
+                                        id="modal-remember" 
+                                        name="remember" 
+                                        type="checkbox"
+                                        class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600"
+                                    >
+                                    <label for="modal-remember" class="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                                        Remember me
+                                    </label>
+                                </div>
+                                <div class="text-sm">
+                                    <a href="{{ route('password.request') }}" class="text-blue-600 hover:text-blue-500 font-medium">
+                                        Forgot password?
+                                    </a>
+                                </div>
                             </div>
 
                             <!-- Submit Button -->

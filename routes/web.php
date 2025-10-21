@@ -38,6 +38,14 @@ Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+// Password Reset Routes
+use App\Http\Controllers\Auth\PasswordResetController;
+
+Route::get('/forgot-password', [PasswordResetController::class, 'showForgotForm'])->name('password.request');
+Route::post('/forgot-password', [PasswordResetController::class, 'sendResetLink'])->name('password.email');
+Route::get('/reset-password/{token}', [PasswordResetController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset-password', [PasswordResetController::class, 'reset'])->name('password.update');
+
 // League routes
 Route::get('/leagues', [LeagueController::class, 'index'])->name('leagues.index');
 Route::get('/leagues/{slug}', [LeagueController::class, 'show'])->name('leagues.show');
