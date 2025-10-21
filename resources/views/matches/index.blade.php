@@ -201,12 +201,6 @@
                 </span>
             @endif
         </div>
-        
-        <a href="{{ route('matches.live') }}" 
-           class="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors ml-4">
-            <span class="live-pulse w-2 h-2 bg-white rounded-full inline-block mr-2"></span>
-            Live
-        </a>
     </div>
     
     <!-- Current Date Display -->
