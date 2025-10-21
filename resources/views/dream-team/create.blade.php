@@ -77,6 +77,20 @@
                         <p class="text-muted text-sm mt-1">Public teams can be viewed by other users</p>
                     </div>
 
+                    <!-- Player Count -->
+                    <div class="mb-4 p-4 bg-gray-800 rounded-lg">
+                        <div class="flex items-center justify-between">
+                            <span class="text-light font-medium">Players Selected:</span>
+                            <span id="player-count" class="text-primary font-bold text-xl">0/11</span>
+                        </div>
+                    </div>
+
+                    @error('players')
+                        <div class="mb-4 p-3 bg-red-500/20 border border-red-500 rounded-lg text-red-400">
+                            {{ $message }}
+                        </div>
+                    @enderror
+
                     <!-- Save Button -->
                     <button type="submit" class="w-full bg-primary hover:bg-primary/80 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-lg">
                         <i class="fas fa-save mr-2"></i>Create Dream Team
@@ -348,6 +362,39 @@ function selectPlayer(player) {
 
 function updatePlayersInput() {
     document.getElementById('players-input').value = JSON.stringify(selectedPlayers);
+    // Update player count display
+    const countElement = document.getElementById('player-count');
+    if (countElement) {
+        countElement.textContent = `${selectedPlayers.length}/11`;
+        countElement.className = selectedPlayers.length === 11 
+            ? 'text-green-400 font-bold text-xl' 
+            : 'text-primary font-bold text-xl';
+    }
 }
+
+// Form validation before submission
+document.getElementById('dream-team-form').addEventListener('submit', function(e) {
+    // Update players input one more time before submission
+    updatePlayersInput();
+    
+    // Check if at least 11 players are selected
+    if (selectedPlayers.length < 11) {
+        e.preventDefault();
+        alert('Please select all 11 players for your dream team!');
+        return false;
+    }
+    
+    // Show loading state
+    const submitButton = this.querySelector('button[type="submit"]');
+    const originalText = submitButton.innerHTML;
+    submitButton.disabled = true;
+    submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creating Dream Team...';
+    
+    // Re-enable after 5 seconds in case of error
+    setTimeout(() => {
+        submitButton.disabled = false;
+        submitButton.innerHTML = originalText;
+    }, 5000);
+});
 </script>
 @endsection

@@ -35,6 +35,17 @@ class DreamTeam extends Model
     }
 
     /**
+     * Get the player count safely
+     */
+    public function getPlayerCountAttribute()
+    {
+        if (is_array($this->players)) {
+            return count($this->players);
+        }
+        return 0;
+    }
+
+    /**
      * Get players in the dream team with their details
      */
     public function getPlayersWithDetails()

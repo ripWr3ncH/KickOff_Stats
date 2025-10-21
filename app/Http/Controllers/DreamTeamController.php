@@ -8,6 +8,7 @@ use App\Models\Player;
 use App\Models\League;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class DreamTeamController extends Controller
 {
@@ -30,11 +31,27 @@ class DreamTeamController extends Controller
 
     public function store(Request $request)
     {
+        // Debug: Log the request data
+        Log::info('Dream Team Store Request', [
+            'all_data' => $request->all(),
+            'players_raw' => $request->input('players'),
+            'players_type' => gettype($request->input('players'))
+        ]);
+
+        // If players is a JSON string, decode it
+        if (is_string($request->input('players'))) {
+            $playersArray = json_decode($request->input('players'), true);
+            $request->merge(['players' => $playersArray]);
+        }
+
         $request->validate([
             'name' => 'required|string|max:255',
             'formation' => 'required|string|in:4-3-3,4-4-2,3-5-2,5-3-2,4-2-3-1',
-            'players' => 'required|array',
+            'players' => 'required|array|min:11',
             'description' => 'nullable|string|max:1000'
+        ], [
+            'players.required' => 'Please select players for your dream team.',
+            'players.min' => 'You must select at least 11 players for your dream team.'
         ]);
 
         $dreamTeam = DreamTeam::create([

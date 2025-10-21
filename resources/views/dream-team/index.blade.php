@@ -40,7 +40,7 @@
                                         <i class="fas fa-chess-board mr-1"></i>{{ $dreamTeam->formation }}
                                     </span>
                                     <span>
-                                        <i class="fas fa-users mr-1"></i>{{ count($dreamTeam->players) }} players
+                                        <i class="fas fa-users mr-1"></i>{{ $dreamTeam->player_count }} players
                                     </span>
                                 </div>
                             </div>
