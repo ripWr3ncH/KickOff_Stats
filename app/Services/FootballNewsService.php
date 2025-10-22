@@ -146,17 +146,21 @@ class FootballNewsService
         
         return Cache::remember($cacheKey, 600, function () use ($limit) { // Cache for 10 minutes
             try {
-                // First try: Get sports headlines and filter for soccer/football
-                $response = Http::get($this->baseUrl . '/top-headlines', [
-                    'category' => 'sports',
+                // Use "everything" endpoint with popular keywords
+                // Note: Free API plan only supports sortBy=publishedAt
+                $response = Http::get($this->baseUrl . '/everything', [
+                    'q' => 'soccer OR "premier league" OR "champions league" OR "la liga" OR Barcelona OR "Real Madrid" OR "Manchester United" OR Liverpool',
                     'language' => 'en',
-                    'pageSize' => $limit * 3, // Get more to filter from
+                    'sortBy' => 'publishedAt', // Free API only supports publishedAt
+                    'pageSize' => $limit,
+                    'domains' => 'bbc.co.uk,espn.com,goal.com,skysports.com,theguardian.com',
                     'apiKey' => $this->apiKey
                 ]);
 
                 if ($response->successful()) {
                     $data = $response->json();
-                    // Filter for soccer/football articles (not American football)
+                    
+                    // Filter out American football articles
                     $articles = collect($data['articles'] ?? [])
                         ->filter(function ($article) {
                             $text = strtolower($article['title'] . ' ' . ($article['description'] ?? ''));
@@ -166,68 +170,22 @@ class FootballNewsService
                                 str_contains($text, 'quarterback') || 
                                 str_contains($text, 'browns') && str_contains($text, 'cleveland') ||
                                 str_contains($text, 'thursday night football') ||
-                                str_contains($text, 'college football') ||
-                                str_contains($text, 'michigan football')) {
+                                str_contains($text, 'college football')) {
                                 return false;
                             }
                             
-                            // Include soccer/football terms
-                            return str_contains($text, 'soccer') || 
-                                   str_contains($text, 'premier league') ||
-                                   str_contains($text, 'champions league') ||
-                                   str_contains($text, 'la liga') ||
-                                   str_contains($text, 'serie a') ||
-                                   str_contains($text, 'bundesliga') ||
-                                   str_contains($text, 'uefa') ||
-                                   str_contains($text, 'fifa') ||
-                                   str_contains($text, 'barcelona') ||
-                                   str_contains($text, 'real madrid') ||
-                                   str_contains($text, 'manchester united') ||
-                                   str_contains($text, 'manchester city') ||
-                                   str_contains($text, 'liverpool') ||
-                                   str_contains($text, 'arsenal') ||
-                                   str_contains($text, 'chelsea') ||
-                                   str_contains($text, 'tottenham') ||
-                                   str_contains($text, 'psg') ||
-                                   str_contains($text, 'juventus') ||
-                                   str_contains($text, 'bayern munich') ||
-                                   str_contains($text, 'ac milan') ||
-                                   str_contains($text, 'inter milan') ||
-                                   str_contains($text, 'atletico') ||
-                                   str_contains($text, 'borussia') ||
-                                   str_contains($text, 'messi') ||
-                                   str_contains($text, 'ronaldo') ||
-                                   str_contains($text, 'neymar') ||
-                                   str_contains($text, 'mbappe') ||
-                                   str_contains($text, 'haaland') ||
-                                   str_contains($text, 'vinicius') ||
-                                   (str_contains($text, 'football') && !str_contains($text, 'american'));
+                            return true;
                         })
                         ->take($limit)
                         ->values()
                         ->toArray();
                     
-                    // If we found soccer articles, return them
                     if (!empty($articles)) {
                         return $this->processNewsArticles($articles);
                     }
                 }
                 
-                // Fallback: Get general football news using "everything" endpoint
-                $fallbackResponse = Http::get($this->baseUrl . '/everything', [
-                    'q' => 'soccer OR "champions league" OR "premier league" OR Barcelona OR "Real Madrid"',
-                    'language' => 'en',
-                    'sortBy' => 'publishedAt',
-                    'pageSize' => min($limit, 10),
-                    'domains' => 'bbc.co.uk,espn.com,goal.com,skysports.com',
-                    'apiKey' => $this->apiKey
-                ]);
-                
-                if ($fallbackResponse->successful()) {
-                    $fallbackData = $fallbackResponse->json();
-                    return $this->processNewsArticles($fallbackData['articles'] ?? []);
-                }
-                
+                Log::error('Trending News API failed: ' . ($response->body() ?? 'Unknown error'));
                 return [];
                 
             } catch (\Exception $e) {
