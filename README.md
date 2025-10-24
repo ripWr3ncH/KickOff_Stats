@@ -1,364 +1,667 @@
 # ⚽ KickOff Stats
 
-A modern, real-time football statistics and live scores web application built with Laravel, featuring comprehensive match tracking, league standings, and live score updates from multiple European leagues.
+A comprehensive football statistics and news platform built with Laravel 12 and modern web technologies. KickOff Stats provides real-time match data, player statistics, league standings, football news, and allows users to create and manage their dream teams.
+
+![KickOff Stats Banner](docs/images/banner.png)
 
 ![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
 ![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white)
 
-## ✨ Features
-
-### 🔴 Live Match Tracking
-- **Real-time live scores** with minute-by-minute updates
-- **Live match status** indicators (LIVE, HT, FT, etc.)
-- **Dynamic score updates** without page refresh
-- **Match timeline** with goals, cards, and substitutions
-
-### 📰 Football News
-- **Latest football news** from trusted sources (BBC, ESPN, Goal, Sky Sports)
-- **Team-specific news** for your favorite clubs
-- **League news** for Premier League, La Liga, Serie A, and more
-- **Search functionality** to find specific news topics
-- **Trending news** section with top sports headlines
-- **Cached content** for improved performance
-
-### 🏆 League Coverage
-- **Premier League** (England)
-- **La Liga** (Spain)  
-- **Serie A** (Italy)
-- **Bundesliga** (Germany) - *Coming Soon*
-- **Ligue 1** (France) - *Coming Soon*
-
-### 📊 Comprehensive Statistics
-- **Team standings** and league tables
-- **Player statistics** and performance metrics
-- **Match history** and head-to-head records
-- **Season analytics** and trends
-
-### 🎨 Modern UI/UX
-- **Responsive design** optimized for all devices
-- **Dark/Light theme** support
-- **Real-time notifications** for score updates
-- **Clean, intuitive interface** with Tailwind CSS
-
-### 🔄 Real-time Updates
-- **WebSocket integration** for live updates
-- **API-driven** architecture for fast data delivery
-- **Background job processing** for continuous data sync
-- **Rate-limited API calls** for optimal performance
-
-## 🚀 Quick Start
-
-### Prerequisites
-- **PHP 8.2+**
-- **Composer**
-- **Node.js 18+**
-- **MySQL 8.0+**
-- **Laravel 12.x**
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/ripWr3ncH/KickOff_Stats.git
-   cd KickOff_Stats
-   ```
-
-2. **Install PHP dependencies**
-   ```bash
-   composer install
-   ```
-
-3. **Install Node.js dependencies**
-   ```bash
-   npm install
-   ```
-
-4. **Environment setup**
-   ```bash
-   cp .env.example .env
-   php artisan key:generate
-   ```
-
-5. **Configure your environment**
-   ```env
-   # Database Configuration
-   DB_CONNECTION=mysql
-   DB_HOST=127.0.0.1
-   DB_PORT=3306
-   DB_DATABASE=kickoffstats_db
-   DB_USERNAME=your_username
-   DB_PASSWORD=your_password
-
-   # Football Data API (Primary)
-   FOOTBALL_DATA_API_KEY=your_football_data_api_key
-
-   # API Football (Alternative)
-   API_FOOTBALL_KEY=your_api_football_key
-   API_FOOTBALL_HOST=api-football-v1.p.rapidapi.com
-   ```
-
-6. **Database setup**
-   ```bash
-   php artisan migrate
-   php artisan db:seed
-   ```
-
-7. **Build assets**
-   ```bash
-   npm run build
-   # or for development
-   npm run dev
-   ```
-
-8. **Start the application**
-   ```bash
-   php artisan serve
-   ```
-
-Visit `http://localhost:8000` to access the application.
-
-## 🔧 Configuration
-
-### API Keys Setup
-
-#### Football-Data.org API
-1. Register at [Football-Data.org](https://www.football-data.org/client/register)
-2. Get your free API key (30 requests/minute)
-3. Add to `.env`: `FOOTBALL_DATA_API_KEY=your_key_here`
-
-#### API-Football (Optional)
-1. Register at [RapidAPI](https://rapidapi.com/api-sports/api/api-football)
-2. Subscribe to API-Football
-3. Add to `.env`: `API_FOOTBALL_KEY=your_key_here`
-
-#### NewsAPI.org (For Football News)
-1. Register at [NewsAPI.org](https://newsapi.org/register)
-2. Get your free API key (1,000 requests/day)
-3. Add to `.env`: `NEWS_API_KEY=your_key_here`
-4. **Note**: News feature works with fallback content even without API key
-
-### Database Configuration
-Create a MySQL database and update your `.env` file with the credentials.
-
-## 🎮 Usage
-
-### Artisan Commands
-
-#### Data Management
-```bash
-# Fetch latest matches (next 7 days)
-php artisan matches:fetch
-
-# Sync live scores and update match status
-php artisan football:sync
-
-# Update team logos from API
-php artisan teams:update-logos
-
-# Check database content and statistics
-php artisan data:check
-
-# Check team logo status
-php artisan teams:check-logos
-
-# Test football news service
-php artisan news:test
-```
-
-#### Background Processing
-```bash
-# Start queue worker for real-time updates
-php artisan queue:work
-
-# Schedule automatic data sync (add to crontab)
-* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1
-```
-
-### API Endpoints
-
-| Endpoint | Method | Description |
-|----------|---------|-------------|
-| `/api/live-scores` | GET | Get current live matches |
-| `/api/matches` | GET | Get all matches |
-| `/api/leagues/{id}` | GET | Get league details and standings |
-| `/api/teams/{id}` | GET | Get team information |
-| `/api/news` | GET | Get latest football news |
-
-### Frontend Features
-
-#### Live Score Updates
-The application automatically updates live scores every 30 seconds using AJAX calls to the API endpoints.
-
-#### Responsive Design
-- **Mobile-first** approach
-- **Progressive Web App** capabilities
-- **Offline mode** for cached data
-
-## 🏗️ Architecture
-
-### Backend (Laravel)
-```
-app/
-├── Console/Commands/     # Artisan commands for data management
-├── Http/Controllers/     # Web and API controllers
-├── Models/              # Eloquent models (Team, League, Match, etc.)
-├── Services/            # Business logic (FootballDataService)
-└── Jobs/                # Background job processing
-```
-
-### Frontend (Blade + JavaScript)
-```
-resources/
-├── views/               # Blade templates
-├── js/                  # JavaScript modules
-└── css/                 # Tailwind CSS styles
-```
-
-### Database Schema
-- **leagues** - Competition information
-- **teams** - Team details and logos
-- **football_matches** - Match data and scores
-- **players** - Player information
-- **player_stats** - Performance statistics
-
-## 🔌 API Integration
-
-### Supported APIs
-1. **Football-Data.org** (Primary)
-   - Free tier: 30 requests/minute
-   - Covers major European leagues
-   - Includes team logos and detailed match data
-
-2. **API-Football** (Secondary)
-   - Backup data source
-   - Extended coverage
-   - Player statistics
-
-### Rate Limiting
-- Automatic rate limiting to respect API quotas
-- Intelligent caching to minimize API calls
-- Fallback mechanisms for API downtime
-
-## 🎨 Customization
-
-### Adding New Leagues
-1. Add league configuration in `FootballDataService::getLeagueMapping()`
-2. Create league record in database
-3. Update team mapping in `UpdateTeamLogosCommand`
-
-### Styling
-The application uses Tailwind CSS for styling. Customize the design by:
-- Modifying `tailwind.config.js`
-- Updating component styles in Blade templates
-- Adding custom CSS in `resources/css/app.css`
-
-## 🧪 Testing
-
-```bash
-# Run all tests
-php artisan test
-
-# Run specific test suite
-php artisan test --testsuite=Feature
-
-# Run with coverage
-php artisan test --coverage
-```
-
-## 📊 Performance
-
-### Optimization Features
-- **Database indexing** for fast queries
-- **API response caching** with Redis
-- **Image lazy loading** for team logos
-- **Minified assets** for production
-
-### Monitoring
-- **Laravel Telescope** for debugging
-- **Query optimization** with Laravel Debugbar
-- **Error logging** with detailed stack traces
-
-## 🔒 Security
-
-- **API key encryption** in environment variables
-- **CSRF protection** on all forms
-- **SQL injection prevention** with Eloquent ORM
-- **XSS protection** with Blade templating
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Development Guidelines
-- Follow PSR-12 coding standards
-- Write tests for new features
-- Update documentation as needed
-- Use meaningful commit messages
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **Football-Data.org** for providing comprehensive football data
-- **Laravel Framework** for the robust backend foundation
-- **Tailwind CSS** for the beautiful, responsive design
-- **Font Awesome** for the iconography
-
-## 📞 Support
-
-- **Issues**: [GitHub Issues](https://github.com/ripWr3ncH/KickOff_Stats/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/ripWr3ncH/KickOff_Stats/discussions)
-- **Email**: [your-email@example.com]
-
-## 🔮 Roadmap
-
-### Upcoming Features
-- [ ] **Push notifications** for favorite teams
-- [ ] **Fantasy football** integration
-- [ ] **Match predictions** with ML
-- [ ] **Social features** (comments, sharing)
-- [ ] **Mobile app** (React Native)
-- [ ] **Extended league coverage**
-- [ ] **Historical data analysis**
-- [ ] **Live commentary** integration
+---
+
+## 📋 Table of Contents
+
+- [Features](#-features)
+- [Screenshots](#-screenshots)
+- [Tech Stack](#-tech-stack)
+- [Prerequisites](#-prerequisites)
+- [Installation](#-installation)
+- [Configuration](#-configuration)
+- [Database Setup](#-database-setup)
+- [Running the Application](#-running-the-application)
+- [Project Structure](#-project-structure)
+- [API Integration](#-api-integration)
+- [Key Features Explained](#-key-features-explained)
+- [Authentication & Authorization](#-authentication--authorization)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Contact](#-contact)
 
 ---
 
-⭐ **Star this repository** if you find it helpful!
+### Core Functionality
+- � **Real-time Match Data** - Live scores and match updates
+- 🏆 **League Standings** - Up-to-date league tables and statistics
+- 👥 **Player Profiles** - Detailed player information and statistics
+- 🏟️ **Team Information** - Comprehensive team data and squad details
+- 📰 **Football News** - Latest football news with search and filtering
+- ⭐ **My Teams** - Save and follow your favorite football teams
+- 🎯 **Dream Team Builder** - Create and manage custom dream teams with tactical formations
 
-🐛 **Found a bug?** [Report it here](https://github.com/ripWr3ncH/KickOff_Stats/issues/new)
+### User Features
+- 🔐 **User Authentication** - Secure registration and login system
+- 👤 **User Profiles** - Personalized user experience
+- 🔑 **Password Reset** - Email-based password recovery
+- 🌓 **Dark/Light Theme** - Toggle between themes with localStorage persistence
+- 📱 **Responsive Design** - Fully responsive across all devices
 
-🚀 **Want a feature?** [Request it here](https://github.com/ripWr3ncH/KickOff_Stats/issues/new)
+### Technical Features
+- ⚡ **Real-time Updates** - Live score updates without page refresh
+- 🔍 **Advanced Search** - Search players, teams, and news
+- 🎨 **Modern UI/UX** - Clean and intuitive interface with Tailwind CSS
+- 🛡️ **Custom Middleware** - Protected routes and authentication checks
+- 📦 **RESTful API** - Well-structured API endpoints
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📸 Screenshots
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Home Page
+![Home Page](docs/images/home-page.png)
+*The landing page featuring live scores, featured matches, and quick navigation*
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### League Standings
+![League Standings](docs/images/league-standings.png)
+*View comprehensive league tables and team statistics*
 
-## Learning Laravel
+### Team Details
+![Team Details](docs/images/team-details.png)
+*Detailed team information including squad, fixtures, and performance stats*
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Player Profile
+![Player Profile](docs/images/player-profile.png)
+*Individual player statistics, biography, and career information*
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Dream Team Builder
+![Dream Team Builder](docs/images/dream-team-builder.png)
+*Create your fantasy team with interactive formation selector*
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### My Teams Dashboard
+![My Teams](docs/images/my-teams.png)
+*Manage and track your favorite football teams*
+
+### Football News
+![News Section](docs/images/news-section.png)
+*Stay updated with latest football news and trending stories*
+
+### Authentication
+![Login/Register](docs/images/auth-modal.png)
+*Secure user authentication with modal-based login and registration*
+
+### Dark Mode
+![Dark Mode](docs/images/dark-mode.png)
+*Seamless dark mode toggle for comfortable viewing*
+
+---
+
+## 🛠️ Tech Stack
+
+### Backend
+- **Framework:** Laravel 12.x
+- **PHP Version:** 8.2+
+- **Database:** MySQL / SQLite
+- **Authentication:** Laravel Auth with custom middleware
+- **API Services:** Football-Data.org API, NewsAPI.org
+
+### Frontend
+- **CSS Framework:** Tailwind CSS v4.0
+- **JavaScript:** Vanilla JS with ES6+
+- **Build Tool:** Vite v7.0
+- **HTTP Client:** Axios
+- **Real-time Updates:** AJAX polling
+
+### Development Tools
+- **Package Manager:** Composer, npm
+- **Version Control:** Git
+- **Server:** XAMPP / Laravel Artisan
+- **Testing:** PHPUnit
+
+---
+
+## 📦 Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+- **PHP** >= 8.2
+- **Composer** - [Download Here](https://getcomposer.org/)
+- **Node.js** >= 18.x & npm - [Download Here](https://nodejs.org/)
+- **MySQL** (or use SQLite for development)
+- **XAMPP/WAMP/MAMP** (optional, for local PHP server)
+- **Git** - [Download Here](https://git-scm.com/)
+
+---
+
+## 🚀 Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/ripWr3ncH/KickOff_Stats.git
+cd KickOff_Stats
+```
+
+### 2. Install PHP Dependencies
+
+```bash
+composer install
+```
+
+### 3. Install JavaScript Dependencies
+
+```bash
+npm install
+```
+
+### 4. Environment Setup
+
+Copy the example environment file:
+
+```bash
+cp .env.example .env
+```
+
+Generate application key:
+
+```bash
+php artisan key:generate
+```
+
+---
+
+## ⚙️ Configuration
+
+### Database Configuration
+
+Edit your `.env` file with your database credentials:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=kickoffstats_db
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+**For SQLite (Alternative):**
+```env
+DB_CONNECTION=sqlite
+DB_DATABASE=/absolute/path/to/database/database.sqlite
+```
+
+### API Keys Configuration
+
+Get your free API keys and add them to `.env`:
+
+```env
+# Football Data API (https://www.football-data.org/)
+FOOTBALL_DATA_API_KEY=your_football_data_api_key_here
+
+# News API (https://newsapi.org/)
+NEWS_API_KEY=your_news_api_key_here
+```
+
+**To get API keys:**
+1. **Football-Data.org API:**
+   - Visit [football-data.org](https://www.football-data.org/)
+   - Register for a free account
+   - Get your API token
+
+2. **NewsAPI.org:**
+   - Visit [newsapi.org](https://newsapi.org/)
+   - Sign up for a free account
+   - Copy your API key
+
+### Session Configuration
+
+```env
+SESSION_DRIVER=database
+SESSION_LIFETIME=120
+```
+
+---
+
+## 🗄️ Database Setup
+
+### 1. Create Database
+
+If using MySQL, create the database:
+
+```sql
+CREATE DATABASE kickoffstats_db;
+```
+
+### 2. Run Migrations
+
+```bash
+php artisan migrate
+```
+
+This will create the following tables:
+- `users` - User accounts
+- `leagues` - Football leagues
+- `teams` - Football teams
+- `players` - Player information
+- `football_matches` - Match data
+- `player_stats` - Player statistics
+- `dream_teams` - User-created dream teams
+- `user_favorite_teams` - User favorite teams
+- `password_reset_tokens` - Password reset functionality
+- `sessions` - User sessions
+- `cache` - Application cache
+- `jobs` - Queue jobs
+
+### 3. Seed Database (Optional)
+
+Populate the database with sample data:
+
+```bash
+php artisan db:seed
+```
+
+---
+
+## 🏃 Running the Application
+
+### Development Mode
+
+**Terminal 1 - Start Laravel Server:**
+```bash
+php artisan serve
+```
+
+**Terminal 2 - Start Vite Development Server:**
+```bash
+npm run dev
+```
+
+**Alternative (All-in-One):**
+```bash
+composer run dev
+```
+
+This will start:
+- Laravel server at `http://localhost:8000`
+- Queue listener
+- Log viewer (Pail)
+- Vite dev server
+
+### Production Build
+
+Build assets for production:
+
+```bash
+npm run build
+```
+
+---
+
+## 📁 Project Structure
+
+```
+KickOff_Stats/
+├── app/
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Auth/
+│   │   │   │   ├── AuthController.php          # User authentication
+│   │   │   │   └── PasswordResetController.php # Password reset
+│   │   │   ├── Api/
+│   │   │   │   └── LiveScoreController.php     # Live score API
+│   │   │   ├── DreamTeamController.php         # Dream team CRUD
+│   │   │   ├── HomeController.php              # Home page
+│   │   │   ├── LeagueController.php            # League data
+│   │   │   ├── MatchController.php             # Match data
+│   │   │   ├── MyTeamsController.php           # User favorite teams
+│   │   │   ├── NewsController.php              # Football news
+│   │   │   ├── PlayerController.php            # Player profiles
+│   │   │   └── TeamController.php              # Team information
+│   │   └── Middleware/
+│   │       └── AuthenticateUser.php            # Custom auth middleware
+│   ├── Models/
+│   │   ├── User.php                            # User model
+│   │   ├── League.php                          # League model
+│   │   ├── Team.php                            # Team model
+│   │   ├── Player.php                          # Player model
+│   │   ├── FootballMatch.php                   # Match model
+│   │   ├── PlayerStat.php                      # Player statistics
+│   │   └── DreamTeam.php                       # Dream team model
+│   └── Services/
+│       ├── FootballDataService.php             # Football API service
+│       └── FootballNewsService.php             # News API service
+├── database/
+│   ├── migrations/                             # Database migrations
+│   └── seeders/                                # Database seeders
+├── resources/
+│   ├── views/
+│   │   ├── layouts/
+│   │   │   └── app.blade.php                   # Main layout with theme toggle
+│   │   ├── dashboard.blade.php                 # User dashboard
+│   │   ├── welcome.blade.php                   # Landing page
+│   │   └── ...                                 # Other views
+│   ├── css/
+│   │   └── app.css                             # Tailwind CSS
+│   └── js/
+│       ├── app.js                              # Main JavaScript
+│       ├── bootstrap.js                        # Bootstrap config
+│       └── live-scores.js                      # Live score updates
+├── routes/
+│   ├── web.php                                 # Web routes
+│   └── console.php                             # Console commands
+├── public/                                     # Public assets
+├── .env                                        # Environment configuration
+├── composer.json                               # PHP dependencies
+├── package.json                                # Node dependencies
+└── README.md                                   # This file
+```
+
+---
+
+## 🔌 API Integration
+
+### Football-Data.org API
+
+The application uses Football-Data.org API for:
+- Live match scores
+- League standings
+- Team information
+- Player data
+- Match schedules
+
+**Key Service Methods:**
+```php
+// app/Services/FootballDataService.php
+- getLiveMatches()          // Fetch live matches
+- getMatchesByDate()        // Get matches by date
+- getLeagueStandings()      // Retrieve league tables
+- getTeamDetails()          // Get team information
+- getPlayerStats()          // Fetch player statistics
+```
+
+### NewsAPI.org
+
+The application uses NewsAPI for football news:
+- Latest football news
+- Trending stories
+- Team-specific news
+- League news
+- Search functionality
+
+**Key Service Methods:**
+```php
+// app/Services/FootballNewsService.php
+- getLatestNews()           // Fetch latest articles
+- getTrendingNews()         // Get trending stories
+- searchNews()              // Search news articles
+- getTeamNews()             // Team-specific news
+- getLeagueNews()           // League-specific news
+```
+
+---
+
+## 🔑 Key Features Explained
+
+### 1. Dream Team Builder
+
+Users can create custom dream teams with:
+- **Formation Selection** - Choose from popular formations (4-3-3, 4-4-2, 3-5-2, etc.)
+- **Player Search** - Search and add players from the database
+- **Position Validation** - Ensure correct player positions
+- **Team Management** - Full CRUD operations (Create, Read, Update, Delete)
+- **JSON Storage** - Players stored as JSON in database
+
+**Controller:** `app/Http/Controllers/DreamTeamController.php`
+
+### 2. My Teams (Favorite Teams)
+
+Users can:
+- Browse all available teams
+- Add teams to favorites
+- Remove teams from favorites
+- View favorite teams dashboard
+- Access team details and fixtures
+
+**Controller:** `app/Http/Controllers/MyTeamsController.php`
+
+### 3. Authentication System
+
+- **Modal-based Login/Register** - No separate pages needed
+- **Password Hashing** - Secure password storage with `Hash::make()`
+- **Session Management** - Database-driven sessions
+- **Password Reset** - Email-based password recovery
+- **Remember Me** - Persistent login functionality
+
+**Controllers:** 
+- `app/Http/Controllers/Auth/AuthController.php`
+- `app/Http/Controllers/Auth/PasswordResetController.php`
+
+### 4. Theme Toggle System
+
+- **Dark/Light Modes** - Seamless theme switching
+- **LocalStorage Persistence** - Survives browser restart
+- **CSS Variables** - Dynamic color scheme
+- **JavaScript Class** - `ThemeManager` for theme management
+
+**Location:** `resources/views/layouts/app.blade.php`
+
+### 5. Real-time Live Scores
+
+- **AJAX Polling** - Automatic updates without refresh
+- **Live Match Status** - Real-time score updates
+- **Match Events** - Goals, cards, substitutions
+- **Match Timeline** - Minute-by-minute updates
+
+**JavaScript:** `public/js/live-scores.js`
+
+---
+
+## 🔐 Authentication & Authorization
+
+### Custom Middleware
+
+**File:** `app/Http/Middleware/AuthenticateUser.php`
+
+The application uses custom authentication middleware (`auth.user`) to protect routes:
+
+**Protected Routes:**
+- `/my-teams/*` - Favorite teams management
+- `/dream-team/*` - Dream team CRUD operations
+- `/forgot-password` - Password reset
+- `/reset-password` - Password reset form
+
+**Public Routes:**
+- `/login` - Login (POST)
+- `/register` - Registration (POST)
+- `/logout` - Logout (POST)
+- `/` - Home page
+- `/leagues/*` - League browsing
+- `/teams/*` - Team browsing
+- `/players/*` - Player browsing
+- `/news/*` - News browsing
+
+**Middleware Registration:** `bootstrap/app.php`
+
+```php
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->alias([
+        'auth.user' => \App\Http\Middleware\AuthenticateUser::class,
+    ]);
+})
+```
+
+### User Registration Flow
+
+1. User submits registration form
+2. Route: `POST /register`
+3. Controller validates input (unique email, password confirmation)
+4. Password hashed with `Hash::make()`
+5. User created: `User::create()`
+6. Automatic login: `Auth::login($user)`
+7. Redirect to dashboard with success message
+
+---
+
+## 🎨 UI/UX Features
+
+- **Responsive Design** - Works on all devices (mobile, tablet, desktop)
+- **Tailwind CSS v4** - Modern utility-first CSS framework
+- **Interactive Components** - Smooth animations and transitions
+- **Loading States** - User feedback during API calls
+- **Error Handling** - Friendly error messages
+- **Toast Notifications** - Real-time user feedback
+- **Modal Windows** - Login/register without page navigation
+- **Search Autocomplete** - Player search with suggestions
+- **Formation Visualizer** - Interactive football pitch diagram
+
+---
+
+## 📊 Database Schema
+
+### Key Tables
+
+**users**
+- User accounts and authentication
+
+**leagues**
+- Football leagues (Premier League, La Liga, etc.)
+
+**teams**
+- Football teams with league associations
+
+**players**
+- Player profiles and information
+
+**football_matches**
+- Match data with home/away teams
+
+**player_stats**
+- Player performance statistics
+
+**dream_teams**
+- User-created fantasy teams (JSON players)
+
+**user_favorite_teams**
+- Many-to-many relationship (users ↔ teams)
+
+---
+
+## 🧪 Testing
+
+Run the test suite:
+
+```bash
+php artisan test
+```
+
+Or using PHPUnit directly:
+
+```bash
+./vendor/bin/phpunit
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow these steps:
+
+1. **Fork the repository**
+2. **Create a feature branch**
+   ```bash
+   git checkout -b feature/AmazingFeature
+   ```
+3. **Commit your changes**
+   ```bash
+   git commit -m 'Add some AmazingFeature'
+   ```
+4. **Push to the branch**
+   ```bash
+   git push origin feature/AmazingFeature
+   ```
+5. **Open a Pull Request**
+
+### Code Style
+
+- Follow PSR-12 coding standards
+- Use meaningful variable and function names
+- Comment complex logic
+- Write tests for new features
+
+---
+
+## 📝 License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## �‍💻 Developer
+
+**Developed by:** [ripWr3ncH](https://github.com/ripWr3ncH)
+
+**Project Link:** [KickOff Stats](https://github.com/ripWr3ncH/KickOff_Stats)
+
+---
+
+## 📧 Contact
+
+For questions, suggestions, or issues:
+
+- **GitHub Issues:** [Create an Issue](https://github.com/ripWr3ncH/KickOff_Stats/issues)
+- **GitHub Profile:** [@ripWr3ncH](https://github.com/ripWr3ncH)
+
+---
+
+## 🙏 Acknowledgments
+
+- **Laravel Framework** - The PHP framework for web artisans
+- **Football-Data.org** - Comprehensive football data API
+- **NewsAPI.org** - Breaking news API
+- **Tailwind CSS** - Utility-first CSS framework
+- **Vite** - Next generation frontend tooling
+
+---
+
+## � Future Enhancements
+
+- [ ] Player comparison tool
+- [ ] Live chat for matches
+- [ ] Social sharing features
+- [ ] Email notifications for favorite teams
+- [ ] Advanced statistics and analytics
+- [ ] Multi-language support
+- [ ] Mobile app (iOS/Android)
+- [ ] Fantasy league competition system
+- [ ] Betting odds integration
+- [ ] Video highlights integration
+
+---
+
+## 🐛 Known Issues
+
+- Free API tier has rate limits (Football-Data.org: 10 requests/minute)
+- News API free plan doesn't support `/top-headlines` sorting by popularity
+- Live scores require manual polling (WebSocket implementation pending)
+
+---
+
+## � Documentation
+
+For more detailed documentation, visit the [Wiki](https://github.com/ripWr3ncH/KickOff_Stats/wiki).
+
+---
+
+<div align="center">
+
+**⭐ Star this repository if you find it helpful! ⭐**
+
+Made with ❤️ and ☕ by [ripWr3ncH](https://github.com/ripWr3ncH)
+
+</div>
+
+
 
 ## Laravel Sponsors
 
