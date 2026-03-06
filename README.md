@@ -4,6 +4,8 @@ A comprehensive football statistics and news platform built with Laravel 12 and 
 
 ![KickOff Stats Banner](docs/images/banner.png)
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-kickoff--stats.onrender.com-brightgreen?style=for-the-badge&logo=render&logoColor=white)](https://kickoff-stats.onrender.com)
+
 ![Laravel](https://img.shields.io/badge/Laravel-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)
 ![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
